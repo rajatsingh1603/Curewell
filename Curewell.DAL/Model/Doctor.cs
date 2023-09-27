@@ -10,5 +10,6 @@ namespace Curewell.DAL.Model
     {
         public int DoctorId { get; set; }
         public string DoctorName { get; set; }
+       
     }
 }

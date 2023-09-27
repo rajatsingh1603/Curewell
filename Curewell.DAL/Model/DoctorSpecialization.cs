@@ -11,5 +11,6 @@ namespace Curewell.DAL.Model
         public int DoctorId { get; set; }
         public string SpecializationCode { get; set; }
         public DateTime SpecializationDate { get; set; }
+        public string DoctorName { get; set; }
     }
 }

@@ -136,7 +136,35 @@ namespace Curewell.DAL
 
         public List<DoctorSpecialization> GetDoctorsBySpecialization(string specializationCode)
         {
-            throw new NotImplementedException();
+            List<DoctorSpecialization> doctors = new List<DoctorSpecialization>();
+            using (_connection = new SqlConnection(SqlConnectionString.GetConnectionString()))
+            {
+                using (_command = new SqlCommand("SELECT DS.DOCTORID AS A, D.DOCTORNAME, DS.SpecializationDate FROM DoctorSpecialization DS JOIN Doctor D ON DS.DOCTORID = D.DOCTORID WHERE DS.SpecializationCode = @specializationCode", _connection))
+                {
+                    _command.Parameters.AddWithValue("@specializationCode", specializationCode);
+                    if (_connection.State != ConnectionState.Open)
+                    {
+                        _connection.Open();
+                    }
+                      
+                    using (_reader = _command.ExecuteReader())
+                    {
+                        if (_reader.HasRows)
+                        {
+                            while (_reader.Read())
+                            {
+                                doctors.Add(new DoctorSpecialization
+                                {
+                                    DoctorId = Convert.ToInt32(_reader.IsDBNull(0) ? (int?)null : _reader.GetInt32(0)),
+                                    DoctorName = _reader.IsDBNull(1) ? string.Empty : _reader.GetString(1).ToString(),
+                                    SpecializationDate = Convert.ToDateTime(_reader.IsDBNull(2) ? (DateTime?)null : _reader.GetDateTime(2))
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            return doctors;
         }
 
         public bool UpdateDoctorDetails(Doctor dObj)
@@ -161,7 +189,23 @@ namespace Curewell.DAL
 
         public bool UpdateSurgery(Surgery SObj)
         {
-            throw new NotImplementedException();
+            int res;
+            using (_connection = new SqlConnection(SqlConnectionString.GetConnectionString()))
+            {
+                using (_command = new SqlCommand("usp_updateSurgery", _connection))
+                {
+                    if (_connection.State != ConnectionState.Open)
+                    {
+                        _connection.Open();
+                    }
+                    _command.CommandType = CommandType.StoredProcedure;
+                    _command.Parameters.AddWithValue("@SurgeryId",SObj.SurgeryId);
+                    _command.Parameters.AddWithValue("@start", SObj.StartTime);
+                    _command.Parameters.AddWithValue("@end", SObj.EndTime);
+                    res = _command.ExecuteNonQuery();
+                    return res > 0;
+                }
+            }
         }
     }
 }

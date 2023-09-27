@@ -12,6 +12,7 @@ namespace Curewell.DAL
         bool AddDoctor(Doctor dObj);
         List<Doctor> GetAllDoctors();
         bool UpdateDoctorDetails(Doctor dObj);
+        List<DoctorSpecialization> GetDoctorsBySpecialization(string specializationCode);
 
     }
 }
